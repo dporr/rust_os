@@ -14,6 +14,10 @@ fn panic(_info: &PanicInfo) -> ! {
 }
 
 //invoked directly by the operating system or bootloader.
+// Interesting way of controling compiler flags:
+//cargo rustc -- -C link-arg=-nostartfiles
 pub extern "C" fn _start() -> ! {
+    // this function is the entry point, since the linker looks for a function
+    // named `_start` by default
     loop {}
 }
