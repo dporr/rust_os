@@ -22,13 +22,14 @@ pub extern "C" fn _start() -> ! {
     // this function is the entry point, since the linker looks for a function
     // named `_start` by default
     //0xb8000 magic number indicating the location of the VGA buffer in memory
-    let vga_buffer = 0xb8000 as *mut u8;
-    for (i, &byte) in HELLO.iter().enumerate() {
-        unsafe {
-            *vga_buffer.offset(i as isize * 2) = byte; // Set buffer[i * 2] to the char
-            *vga_buffer.offset(i as isize * 2 + 1) = 0xb; //Set background to light cyan 0xb
-        }
-    }
+    // let vga_buffer = 0xb8000 as *mut u8;
+    // for (i, &byte) in HELLO.iter().enumerate() {
+    //     unsafe {
+    //         *vga_buffer.offset(i as isize * 2) = byte; // Set buffer[i * 2] to the char
+    //         *vga_buffer.offset(i as isize * 2 + 1) = 0xb; //Set background to light cyan 0xb
+    //     }
+    // }
+    vga_buffer::print_someting();
     loop {}
 }
 

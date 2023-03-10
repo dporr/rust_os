@@ -63,13 +63,13 @@ impl ColorCode {
     chars: [[ScreenChar; BUFFER_WIDTH]; BUFFER_HEIGHT],
  }
 
- pub struct Writter {
+ pub struct Writer {
     column_position: usize,
     color_code: ColorCode,
     buffer: &'static mut Buffer,
  }
 
- impl Writter {
+ impl Writer {
     pub fn write_byte(&mut self, byte: u8) {
         match byte { 
             b'\n' => self.new_line(),
@@ -107,3 +107,26 @@ impl ColorCode {
     
     }
  }
+
+ pub fn print_someting() {
+    let mut writer = Writer {
+        column_position: 0,
+        color_code: ColorCode::new(Color::Yellow, Color::Black),
+        /* 1. Cast the integer 0xb8000 as a mutable raw pointer
+            (0xb8000 as *mut Buffer) now the memory at 0xb8000 
+            has the shape of the struct Buffer.
+        
+        2.hen we convert it to a mutable reference by dereferencing it
+          *(0xb8000 as *mut Buffer)
+          
+        3. borrowing it again (through &mut)
+            &mut *(0xb8000 as *mut Buffer)
+
+        In the end  Writer.buffer points to a raw memory area
+        with the shape of struct Buffer that we can manipulate
+        to print stuff.
+        */
+        buffer: unsafe { &mut *(0xb8000 as *mut Buffer) },
+    };
+    writer.write_string("Hellö öööRLD! ö ");
+}
