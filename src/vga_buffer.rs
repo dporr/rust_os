@@ -1,3 +1,5 @@
+use volatile::Volatile;
+
 #[allow(dead_code)]
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 #[repr(u8)]
@@ -60,7 +62,10 @@ impl ColorCode {
     // [(ScreenChar0, ScreenChar1, ...ScreenCharN)0,
     // (ScreenChar0, ScreenChar1, ...ScreenCharN)1,
     // (ScreenChar0, ScreenChar1, ...ScreenCharN)N]
-    chars: [[ScreenChar; BUFFER_WIDTH]; BUFFER_HEIGHT],
+
+    //Volatile<T> tells the compiler that the write 
+    //has side effects and should not be optimized away.
+    chars: [[Volatile<ScreenChar>; BUFFER_WIDTH]; BUFFER_HEIGHT],
  }
 
  pub struct Writer {
@@ -82,10 +87,10 @@ impl ColorCode {
                 let col = self.column_position;
 
                 let color_code = self.color_code;
-                self.buffer.chars[row][col] = ScreenChar {
+                self.buffer.chars[row][col].write( ScreenChar {
                     ascii_character: byte,
                     color_code,
-                };
+                });
                 self.column_position += 1;
             }
 
