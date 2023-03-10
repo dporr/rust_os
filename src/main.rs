@@ -1,7 +1,7 @@
 #![no_std]
 #![no_main]
 use core::panic::PanicInfo;
-
+mod vga_buffer;
 
 #[panic_handler]
 // PanicInfo parameter contains the file and line
@@ -16,7 +16,8 @@ fn panic(_info: &PanicInfo) -> ! {
 //invoked directly by the operating system or bootloader.
 // Interesting way of controling compiler flags:
 //cargo rustc -- -C link-arg=-nostartfiles
-static HELLO: &[u8] = b"Hello World!";
+static HELLO: &[u8] = b"Hello HackTheBox GT!";
+#[no_mangle]
 pub extern "C" fn _start() -> ! {
     // this function is the entry point, since the linker looks for a function
     // named `_start` by default
