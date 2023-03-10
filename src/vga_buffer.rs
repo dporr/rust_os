@@ -30,7 +30,7 @@ struct ColorCode(u8);
 
 //Adding an action for our ColorCode type
 impl ColorCode {
-    fn new(foreground: Color, background: Color) -> ColorCode { 
+    fn new(foreground: Color, background: Color) -> ColorCode {
         ColorCode( (background as u8) << 4 | (foreground as u8))
     }
  }
@@ -114,24 +114,36 @@ impl ColorCode {
  }
 
  pub fn print_someting() {
-    let mut writer = Writer {
-        column_position: 0,
-        color_code: ColorCode::new(Color::Yellow, Color::Black),
-        /* 1. Cast the integer 0xb8000 as a mutable raw pointer
-            (0xb8000 as *mut Buffer) now the memory at 0xb8000 
-            has the shape of the struct Buffer.
-        
-        2.hen we convert it to a mutable reference by dereferencing it
-          *(0xb8000 as *mut Buffer)
-          
-        3. borrowing it again (through &mut)
-            &mut *(0xb8000 as *mut Buffer)
+        use core::fmt::Write;
+        let mut writer = Writer {
+            column_position: 0,
+            color_code: ColorCode::new(Color::Yellow, Color::Black),
+            /* 1. Cast the integer 0xb8000 as a mutable raw pointer
+                (0xb8000 as *mut Buffer) now the memory at 0xb8000 
+                has the shape of the struct Buffer.
+            
+            2.hen we convert it to a mutable reference by dereferencing it
+            *(0xb8000 as *mut Buffer)
+            
+            3. borrowing it again (through &mut)
+                &mut *(0xb8000 as *mut Buffer)
 
-        In the end  Writer.buffer points to a raw memory area
-        with the shape of struct Buffer that we can manipulate
-        to print stuff.
-        */
-        buffer: unsafe { &mut *(0xb8000 as *mut Buffer) },
-    };
-    writer.write_string("Hellö öööRLD! ö ");
+            In the end  Writer.buffer points to a raw memory area
+            with the shape of struct Buffer that we can manipulate
+            to print stuff.
+            */
+            buffer: unsafe { &mut *(0xb8000 as *mut Buffer) },
+        };
+        writer.write_string("Hellö öööRLD! ö ");
+        write!(writer, "The numbers are {} and {}", 42, 1.0/3.0).unwrap();
+    }
+
+use core::fmt;
+
+impl fmt::Write for Writer {
+    fn write_str(&mut self, s: &str) -> fmt::Result {
+        self.write_string(s);
+        Ok(())
+    }
 }
+
