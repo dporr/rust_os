@@ -16,7 +16,6 @@ fn panic(_info: &PanicInfo) -> ! {
 //invoked directly by the operating system or bootloader.
 // Interesting way of controling compiler flags:
 //cargo rustc -- -C link-arg=-nostartfiles
-static HELLO: &[u8] = b"Hello HackTheBox GT!";
 #[no_mangle]
 pub extern "C" fn _start() -> ! {
     // this function is the entry point, since the linker looks for a function
@@ -29,8 +28,11 @@ pub extern "C" fn _start() -> ! {
     //         *vga_buffer.offset(i as isize * 2 + 1) = 0xb; //Set background to light cyan 0xb
     //     }
     // }
-    vga_buffer::print_someting();
-    loop {}
+   //vga_buffer::print_someting();
+   use core::fmt::Write;
+   vga_buffer::WRITER.lock().write_str("Using lazy loaded statics is awesome. \n\n\n").unwrap();
+   write!(vga_buffer::WRITER.lock(), ", Some numbers: {} {}", 42, 666).unwrap(); 
+   loop {}
 }
 
 /*
