@@ -131,30 +131,30 @@ impl ColorCode {
     }
  }
 
- pub fn print_someting() {
-        use core::fmt::Write;
-        let mut writer = Writer {
-            column_position: 0,
-            color_code: ColorCode::new(Color::Yellow, Color::Black),
-            /* 1. Cast the integer 0xb8000 as a mutable raw pointer
-                (0xb8000 as *mut Buffer) now the memory at 0xb8000 
-                has the shape of the struct Buffer.
+//  pub fn print_someting() {
+//         use core::fmt::Write;
+//         let mut writer = Writer {
+//             column_position: 0,
+//             color_code: ColorCode::new(Color::Yellow, Color::Black),
+//             /* 1. Cast the integer 0xb8000 as a mutable raw pointer
+//                 (0xb8000 as *mut Buffer) now the memory at 0xb8000 
+//                 has the shape of the struct Buffer.
             
-            2.hen we convert it to a mutable reference by dereferencing it
-            *(0xb8000 as *mut Buffer)
+//             2.hen we convert it to a mutable reference by dereferencing it
+//             *(0xb8000 as *mut Buffer)
             
-            3. borrowing it again (through &mut)
-                &mut *(0xb8000 as *mut Buffer)
+//             3. borrowing it again (through &mut)
+//                 &mut *(0xb8000 as *mut Buffer)
 
-            In the end  Writer.buffer points to a raw memory area
-            with the shape of struct Buffer that we can manipulate
-            to print stuff.
-            */
-            buffer: unsafe { &mut *(0xb8000 as *mut Buffer) },
-        };
-        writer.write_string("Hellö öööRLD! ö ");
-        write!(writer, "The numbers are {} and {}", 42, 1.0/3.0).unwrap();
-    }
+//             In the end  Writer.buffer points to a raw memory area
+//             with the shape of struct Buffer that we can manipulate
+//             to print stuff.
+//             */
+//             buffer: unsafe { &mut *(0xb8000 as *mut Buffer) },
+//         };
+//         writer.write_string("Hellö öööRLD! ö ");
+//         write!(writer, "The numbers are {} and {}", 42, 1.0/3.0).unwrap();
+//     }
 
 use core::fmt;
 
@@ -174,4 +174,21 @@ lazy_static! {
         color_code: ColorCode::new(Color::Yellow, Color::Black),
         buffer: unsafe {&mut *(0xb8000 as *mut Buffer) },
     });
+}
+
+#[macro_export]
+macro_rules! print {
+    ($($arg:tt)*) => ($crate::vga_buffer::_print(format_args!($($arg)*)));
+}
+
+#[macro_export]
+macro_rules! println {
+    () => ($crate::print!("\n"));
+    ($($arg:tt)*) => ($crate::print!("{}\n", format_args!($($arg)*)));
+}
+
+#[doc(hidden)]
+pub fn _print(args: fmt::Arguments) {
+    use core::fmt::Write;
+    WRITER.lock().write_fmt(args).unwrap();
 }

@@ -30,7 +30,7 @@ pub extern "C" fn _start() -> ! {
     // }
    //vga_buffer::print_someting();
    use core::fmt::Write;
-   vga_buffer::WRITER.lock().write_str("Using lazy loaded statics is awesome. \n\n\n").unwrap();
+   println! ("Using lazy loaded statics is awesome. \n\n\n");
    write!(vga_buffer::WRITER.lock(), ", Some numbers: {} {}", 42, 666).unwrap(); 
    loop {}
 }
