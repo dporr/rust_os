@@ -10,6 +10,7 @@ mod vga_buffer;
 // -> ! indicates a diverging function
 // (A function that do not retur)
 fn panic(_info: &PanicInfo) -> ! {
+    println! ("{}", _info);
     loop {}
 }
 
@@ -29,9 +30,10 @@ pub extern "C" fn _start() -> ! {
     //     }
     // }
    //vga_buffer::print_someting();
-   use core::fmt::Write;
+   //use core::fmt::Write;
    println! ("Using lazy loaded statics is awesome. \n\n\n");
-   write!(vga_buffer::WRITER.lock(), ", Some numbers: {} {}", 42, 666).unwrap(); 
+   println! ("Some numbers: {} {}", 42, 666); 
+   panic! ("Some panic msg!");
    loop {}
 }
 
