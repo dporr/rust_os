@@ -187,6 +187,33 @@ macro_rules! println {
     ($($arg:tt)*) => ($crate::print!("{}\n", format_args!($($arg)*)));
 }
 
+#[test_case]
+//Test that println! doesnt panic
+fn test_println_simple() {
+    println! ("test println simple output");
+}
+#[test_case]
+//Test when printing more lines than the ones in screen 
+fn test_println_many() {
+    for i in 0..200 {
+        println! ("Print as many as {}...", i);
+    }
+}
+
+#[test_case]
+//Test that the output in the secreen matches the desired input string
+fn test_println_output() {
+    let s = "This should be outputed as is";
+    println!("{}",s);
+    for (i, c) in s.chars().enumerate() {
+        let screen_char = WRITER.lock().buffer.chars[BUFFER_HEIGHT-2][i].read();
+        assert_eq!(char::from(screen_char.ascii_character), c);
+    }
+}
+
+
+
+
 #[doc(hidden)]
 pub fn _print(args: fmt::Arguments) {
     use core::fmt::Write;
