@@ -1,5 +1,17 @@
-#![no_std]
+#![cfg_attr(not(feature = "std"), no_std)]
 #![no_main]
+#![feature(custom_test_frameworks)]
+#![test_runner(crate::test_runner)]
+#![reexport_test_harness_main = "test_main"]
+
+#[cfg(test)]
+fn test_runner(tests: &[&dyn Fn()]) {
+    println!("Running {} tests", tests.len());
+    for test in tests {
+        test();
+    }
+}
+
 use core::panic::PanicInfo;
 mod vga_buffer;
 
@@ -13,6 +25,7 @@ fn panic(_info: &PanicInfo) -> ! {
     println! ("{}", _info);
     loop {}
 }
+
 
 //invoked directly by the operating system or bootloader.
 // Interesting way of controling compiler flags:
@@ -33,7 +46,8 @@ pub extern "C" fn _start() -> ! {
    //use core::fmt::Write;
    println! ("Using lazy loaded statics is awesome. \n\n\n");
    println! ("Some numbers: {} {}", 42, 666); 
-   panic! ("Some panic msg!");
+   #[cfg(test)]
+   test_main();
    loop {}
 }
 
@@ -48,3 +62,11 @@ renaming during compilation). However, this is dangerous
 since the slightest mistake in the implementation of these
 functions could lead to undefined behavior. 
 */
+
+
+#[test_case]
+fn trivial_assertion() {
+    print!("trivial assertion... ");
+    assert_eq!(1, 1);
+    println!("[ok]");
+}
