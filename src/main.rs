@@ -43,6 +43,10 @@ pub extern "C" fn _start() -> ! {
    //use core::fmt::Write;
    println! ("Using lazy loaded statics is awesome. \n\n\n");
    println! ("Some numbers: {} {}", 42, 666); 
+   
+   rust_os::init();
+   x86_64::instructions::interrupts::int3(); // new
+   
    #[cfg(test)]
    test_main();
    loop {}
