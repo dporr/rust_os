@@ -45,8 +45,12 @@ pub extern "C" fn _start() -> ! {
    println! ("Some numbers: {} {}", 42, 666); 
    
    rust_os::init();
-   x86_64::instructions::interrupts::int3(); // new
-   
+   //x86_64::instructions::interrupts::int3(); // new
+    // trigger a page fault
+    unsafe {
+        *(0xdeadbeef as *mut u64) = 42;
+    };
+
    #[cfg(test)]
    test_main();
    loop {}
