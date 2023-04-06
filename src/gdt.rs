@@ -17,3 +17,20 @@ lazy_static! {
         tss
     };
 }
+
+
+use x86_64::structures::gdt::{ GlobalDescriptorTable, Descriptor};
+lazy_static! {
+    static ref GDT: GlobalDescriptorTable = {
+        let mut gdt: GlobalDescriptorTable = GlobalDescriptorTable::new();
+        gdt.add_entry(Descriptor::kernel_code_segment());
+        let tss_descriptor = Descriptor::tss_segment(&TSS);
+        gdt.add_entry(tss_descriptor);
+        gdt
+    };
+
+}
+
+fn init(){
+    GDT::load();
+}
