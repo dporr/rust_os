@@ -31,6 +31,6 @@ lazy_static! {
 
 }
 
-fn init(){
-    GDT::load();
+pub fn init(){
+    GDT.load();
 }
